@@ -1,12 +1,13 @@
 # Socio AI Agent Makefile
 
-.PHONY: help install backend frontend dev build build-frontend test clean lint format
+.PHONY: help install install-frontend backend frontend dev build build-frontend test clean lint format
 
 # Default target
 help:
 	@echo "Socio AI Agent - Available commands:"
 	@echo ""
 	@echo "  install     - Install all dependencies (Rust + Node.js)"
+	@echo "  install-frontend - Install frontend dependencies only"
 	@echo "  backend     - Run the Rust backend server"
 	@echo "  frontend    - Run the React frontend development server"
 	@echo "  dev         - Run both backend and frontend in development mode"
@@ -20,9 +21,14 @@ help:
 	@echo ""
 
 # Install dependencies
-install:
+install: check-deps
 	@echo "Installing Rust dependencies..."
 	cargo build
+	@echo "Installing Node.js dependencies..."
+	cd crates/socio/frontend && npm install
+
+# Install frontend dependencies only
+install-frontend:
 	@echo "Installing Node.js dependencies..."
 	cd crates/socio/frontend && npm install
 

@@ -1,4 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react'
+import { ChatService, ChatRequest, ChatResponse } from '../api'
+import { convertApiMessageToLocal } from '../utils/messageConverter'
 
 export interface ChatMessage {
   id: string
@@ -129,34 +131,21 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'SET_LOADING', payload: true })
 
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message,
-          session_id: state.sessionId,
-        }),
+      const request: ChatRequest = {
+        message,
+        session_id: state.sessionId || undefined,
+      }
+
+      const response: ChatResponse = await ChatService.handleChat({
+        requestBody: request,
       })
-
-      if (!response.ok) {
-        throw new Error('Failed to send message')
-      }
-
-      const data = await response.json()
       
-      const assistantMessage: ChatMessage = {
-        id: data.message.id,
-        content: data.message.content,
-        timestamp: new Date(data.message.timestamp),
-        sender: 'assistant',
-      }
+      const assistantMessage: ChatMessage = convertApiMessageToLocal(response.message)
 
       dispatch({ type: 'ADD_MESSAGE', payload: assistantMessage })
       
       if (!state.sessionId) {
-        dispatch({ type: 'SET_SESSION_ID', payload: data.session_id })
+        dispatch({ type: 'SET_SESSION_ID', payload: response.session_id })
       }
     } catch (error) {
       console.error('Error sending message:', error)

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Send, Trash2, Bot, User } from 'lucide-react'
+import { Send, Trash2, Bot, User, Settings } from 'lucide-react'
 import { useChat } from '../contexts/ChatContext'
+import { Link } from 'react-router-dom'
 
 const ChatInterface: React.FC = () => {
   const { state, sendMessage, clearChat } = useChat()
@@ -43,13 +44,22 @@ const ChatInterface: React.FC = () => {
               <p className="text-sm text-gray-500">Your Social Media Content Assistant</p>
             </div>
           </div>
-          <button
-            onClick={clearChat}
-            className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-          >
-            <Trash2 className="w-4 h-4" />
-            <span>Clear</span>
-          </button>
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={clearChat}
+              className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span>Clear</span>
+            </button>
+            <Link
+              to="/api-demo"
+              className="flex items-center space-x-2 px-3 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+            >
+              <Settings className="w-4 h-4" />
+              <span>API Demo</span>
+            </Link>
+          </div>
         </div>
       </div>
 

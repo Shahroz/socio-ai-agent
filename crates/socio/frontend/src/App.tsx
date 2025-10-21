@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { ChatProvider } from './contexts/ChatContext'
 import ChatInterface from './components/ChatInterface'
-import './App.css'
+import { ApiDemo } from './components/ApiDemo'
 
 function App() {
   return (
@@ -10,6 +10,7 @@ function App() {
         <div className="min-h-screen bg-gray-50">
           <Routes>
             <Route path="/" element={<ChatInterface />} />
+            <Route path="/api-demo" element={<ApiDemo />} />
           </Routes>
         </div>
       </Router>

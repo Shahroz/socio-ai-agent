@@ -17,7 +17,8 @@ use chrono::{DateTime, Utc};
             ChatMessage,
             SocialMediaConfig,
             ErrorResponse,
-            HealthResponse
+            HealthResponse,
+            ConfigResponse
         )
     ),
     tags(

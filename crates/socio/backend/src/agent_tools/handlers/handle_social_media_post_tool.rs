@@ -69,6 +69,9 @@ async fn post_to_linkedin(params: &SocialMediaPostToolRequest) -> Result<SocialM
     
     validate_linkedin_config(&params.platform_config)?;
     
+    // Process content with hashtags for LinkedIn
+    let processed_content = process_content_for_linkedin(&params.content);
+    
     // Simulate API call delay
     tokio::time::sleep(tokio::time::Duration::from_millis(100)).await;
     
@@ -80,8 +83,10 @@ async fn post_to_linkedin(params: &SocialMediaPostToolRequest) -> Result<SocialM
         error_message: None,
         metadata: Some(serde_json::json!({
             "posted_at": chrono::Utc::now(),
-            "content_length": params.content.len(),
-            "has_image": params.image_url.is_some()
+            "content_length": processed_content.len(),
+            "has_image": params.image_url.is_some(),
+            "hashtag_count": extract_hashtag_count(&processed_content),
+            "seo_optimized": true
         })),
     })
 }
@@ -100,8 +105,11 @@ async fn post_to_twitter(params: &SocialMediaPostToolRequest) -> Result<SocialMe
     
     validate_twitter_config(&params.platform_config)?;
     
+    // Process content with hashtags for Twitter
+    let processed_content = process_content_for_twitter(&params.content);
+    
     // Check character limit
-    if params.content.len() > 280 {
+    if processed_content.len() > 280 {
         return Err(anyhow::anyhow!("Content exceeds Twitter's 280 character limit"));
     }
     
@@ -116,8 +124,10 @@ async fn post_to_twitter(params: &SocialMediaPostToolRequest) -> Result<SocialMe
         error_message: None,
         metadata: Some(serde_json::json!({
             "posted_at": chrono::Utc::now(),
-            "character_count": params.content.len(),
-            "has_image": params.image_url.is_some()
+            "character_count": processed_content.len(),
+            "has_image": params.image_url.is_some(),
+            "hashtag_count": extract_hashtag_count(&processed_content),
+            "seo_optimized": true
         })),
     })
 }
@@ -136,6 +146,9 @@ async fn post_to_facebook(params: &SocialMediaPostToolRequest) -> Result<SocialM
     
     validate_facebook_config(&params.platform_config)?;
     
+    // Process content with hashtags for Facebook
+    let processed_content = process_content_for_facebook(&params.content);
+    
     // Simulate API call delay
     tokio::time::sleep(tokio::time::Duration::from_millis(200)).await;
     
@@ -147,8 +160,10 @@ async fn post_to_facebook(params: &SocialMediaPostToolRequest) -> Result<SocialM
         error_message: None,
         metadata: Some(serde_json::json!({
             "posted_at": chrono::Utc::now(),
-            "content_length": params.content.len(),
-            "has_image": params.image_url.is_some()
+            "content_length": processed_content.len(),
+            "has_image": params.image_url.is_some(),
+            "hashtag_count": extract_hashtag_count(&processed_content),
+            "seo_optimized": true
         })),
     })
 }
@@ -172,6 +187,9 @@ async fn post_to_instagram(params: &SocialMediaPostToolRequest) -> Result<Social
         return Err(anyhow::anyhow!("Instagram posts require an image or video"));
     }
     
+    // Process content with hashtags for Instagram
+    let processed_content = process_content_for_instagram(&params.content);
+    
     // Simulate API call delay
     tokio::time::sleep(tokio::time::Duration::from_millis(300)).await;
     
@@ -183,9 +201,11 @@ async fn post_to_instagram(params: &SocialMediaPostToolRequest) -> Result<Social
         error_message: None,
         metadata: Some(serde_json::json!({
             "posted_at": chrono::Utc::now(),
-            "content_length": params.content.len(),
+            "content_length": processed_content.len(),
             "has_image": true,
-            "image_url": params.image_url
+            "image_url": params.image_url,
+            "hashtag_count": extract_hashtag_count(&processed_content),
+            "seo_optimized": true
         })),
     })
 }
@@ -252,6 +272,114 @@ fn validate_instagram_config(config: &PlatformConfig) -> Result<()> {
         return Err(anyhow::anyhow!("Instagram requires an access token"));
     }
     Ok(())
+}
+
+/// Processes content for LinkedIn posting.
+///
+/// # Arguments
+///
+/// * `content` - The original content
+///
+/// # Returns
+///
+/// Processed content optimized for LinkedIn.
+fn process_content_for_linkedin(content: &str) -> String {
+    let mut processed = content.to_string();
+    
+    // Ensure hashtags are properly formatted for LinkedIn
+    processed = processed.replace("# ", "#");
+    
+    // Add professional call-to-action if missing
+    if !processed.contains("?") && !processed.contains("thoughts") && !processed.contains("share") {
+        processed.push_str("\n\nWhat are your thoughts on this topic? Share your experience in the comments below!");
+    }
+    
+    processed
+}
+
+/// Processes content for Facebook posting.
+///
+/// # Arguments
+///
+/// * `content` - The original content
+///
+/// # Returns
+///
+/// Processed content optimized for Facebook.
+fn process_content_for_facebook(content: &str) -> String {
+    let mut processed = content.to_string();
+    
+    // Ensure hashtags are properly formatted for Facebook
+    processed = processed.replace("# ", "#");
+    
+    // Add community engagement elements if missing
+    if !processed.contains("?") && !processed.contains("share") && !processed.contains("story") {
+        processed.push_str("\n\nHave you experienced this technology? Share your story!");
+    }
+    
+    processed
+}
+
+/// Processes content for Instagram posting.
+///
+/// # Arguments
+///
+/// * `content` - The original content
+///
+/// # Returns
+///
+/// Processed content optimized for Instagram.
+fn process_content_for_instagram(content: &str) -> String {
+    let mut processed = content.to_string();
+    
+    // Ensure hashtags are properly formatted for Instagram
+    processed = processed.replace("# ", "#");
+    
+    // Add Instagram-specific engagement elements
+    if !processed.contains("💬") && !processed.contains("comments") {
+        processed.push_str("\n\nWhat do you think about this breakthrough? Let us know in the comments! 💬");
+    }
+    
+    processed
+}
+
+/// Processes content for Twitter posting.
+///
+/// # Arguments
+///
+/// * `content` - The original content
+///
+/// # Returns
+///
+/// Processed content optimized for Twitter.
+fn process_content_for_twitter(content: &str) -> String {
+    let mut processed = content.to_string();
+    
+    // Ensure hashtags are properly formatted for Twitter
+    processed = processed.replace("# ", "#");
+    
+    // Add engagement elements if space allows
+    if processed.len() < 250 && !processed.contains("👇") && !processed.contains("?") {
+        processed.push_str("\n\nWhat's your take? 👇");
+    }
+    
+    processed
+}
+
+/// Extracts hashtag count from content.
+///
+/// # Arguments
+///
+/// * `content` - The content to analyze
+///
+/// # Returns
+///
+/// The number of hashtags found in the content.
+fn extract_hashtag_count(content: &str) -> usize {
+    content
+        .split_whitespace()
+        .filter(|word| word.starts_with('#'))
+        .count()
 }
 
 #[cfg(test)]

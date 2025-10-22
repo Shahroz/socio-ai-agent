@@ -1,0 +1,63 @@
+[package]
+name = "socio-backend"
+version = "0.1.0"
+edition = "2021"
+authors = ["Shahroz Alauddin <shahroz@example.com>"]
+license = "MIT"
+repository = "https://github.com/shahrozalauddin/socio-ai-agent"
+
+[[bin]]
+name = "socio"
+path = "src/main.rs"
+
+[dependencies]
+# Core dependencies
+tokio = { version = "1.0", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+anyhow = "1.0"
+thiserror = "1.0"
+tracing = "0.1"
+uuid = { version = "1.0", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# Web framework
+actix-web = { version = "4.4", features = ["macros"] }
+actix-cors = "0.6"
+actix-files = "0.6"
+actix-web-actors = "4.2"
+actix = "0.13"
+
+# Database
+sqlx = { version = "0.7", features = ["runtime-tokio-rustls", "postgres", "chrono", "uuid", "json"] }
+
+# Social media APIs
+reqwest = { version = "0.11", features = ["json"] }
+oauth2 = "4.4"
+
+# OpenAPI and Swagger
+utoipa = { version = "4.2", features = ["actix_extras", "chrono", "uuid"] }
+utoipa-swagger-ui = { version = "6.0", features = ["actix-web"] }
+
+# Environment and logging
+dotenvy = "0.15"
+tracing-subscriber = "0.3"
+
+# LLM integration
+llm = { path = "../../llm" }
+agentloop = { path = "../../agentloop" }
+
+# Schema generation
+schemars = { version = "1.0", features = ["chrono04", "uuid1"] }
+
+# Async utilities
+futures = "0.3"
+futures-util = "0.3"
+
+# Error handling
+strum = "0.26"
+strum_macros = "0.26"
+
+[dev-dependencies]
+actix-rt = "2.8"
+tokio-test = "0.4"

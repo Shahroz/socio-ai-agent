@@ -8,7 +8,7 @@ repository.workspace = true
 
 [[bin]]
 name = "socio"
-path = "src/main.rs"
+path = "backend/src/main.rs"
 
 [dependencies]
 tokio.workspace = true
@@ -43,3 +43,4 @@ tracing-subscriber = "0.3"
 
 # LLM integration
 llm = { path = "../llm" }
+socio-backend = { path = "backend" }

@@ -2,7 +2,9 @@
 members = [
     "crates/llm",
     "crates/socio",
-    "crates/agent"
+    "crates/socio/backend",
+    "crates/agentloop",
+    "crates/api_clients"
 ]
 resolver = "2"
 

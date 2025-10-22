@@ -1,0 +1,15 @@
+# Use the official PostgreSQL image
+FROM postgres:15
+
+# Set environment variables for database creation using values likely defined elsewhere (e.g., .env)
+# These values will create a user and database, granting the user full privileges on that database.
+ENV POSTGRES_USER=localuser
+ENV POSTGRES_PASSWORD=localpassword
+ENV POSTGRES_DB=localdatabase
+
+# Expose the default PostgreSQL port
+EXPOSE 5432
+
+# The entrypoint script in the base image handles database initialization
+# based on the environment variables. The user specified by POSTGRES_USER will have
+# all privileges on the database specified by POSTGRES_DB automatically.
